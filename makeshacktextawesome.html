@@ -22,6 +22,9 @@
             var finalString = '';
             for (var i = 0, len = prettyDamnGoodText.length; i < len; i++) {
                 var thisLetter = prettyDamnGoodText[i];
+                if(thisLetter === ' ') {
+                  continue;
+                }
                 var randomColor = tawesome.randomColorTag();
                 var encodedLetter = randomColor.replace('8==>', thisLetter);
                 finalString += encodedLetter + ' ';
