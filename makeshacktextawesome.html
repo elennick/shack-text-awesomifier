@@ -1,0 +1,65 @@
+<html>
+
+<head>
+    <script>
+        var tawesome = {};
+        tawesome.colors = [];
+        tawesome.colors.RED = 'r{8==>}r';
+        tawesome.colors.GREEN = 'g{8==>}g';
+        tawesome.colors.BLUE = 'b{8==>}b';
+        tawesome.colors.YELLOW = 'y{8==>}y';
+        tawesome.colors.OLIVE = 'e[8==>]e';
+        tawesome.colors.LIMEGREEN = 'l[8==>]l';
+        tawesome.colors.ORANGE = 'n[8==>]n';
+        tawesome.colors.NERDSBEWARE = 'p[8==>]p';
+        tawesome.colors.BOLD = 'b[8==>]b';
+
+        tawesome.makeTextAwesome = function() {
+            var unawesomeText = document.getElementById("unawesomeTextArea").value;
+            var slightlyBetterText = tawesome.putAstrixesBetweenEverything(unawesomeText);
+            var prettyDamnGoodText = '- - - < < ( * ' + slightlyBetterText.toUpperCase() + ' * ) > > - - -';
+
+            var finalString = '';
+            for (var i = 0, len = prettyDamnGoodText.length; i < len; i++) {
+                var thisLetter = prettyDamnGoodText[i];
+                var randomColor = tawesome.randomColorTag();
+                var encodedLetter = randomColor.replace('8==>', thisLetter);
+                finalString += encodedLetter + ' ';
+            }
+
+            var awesomeTextDiv = document.getElementById("awesomeTextDiv");
+            awesomeTextDiv.innerHTML = finalString;
+        };
+
+        tawesome.randomColorTag = function() {
+            var keys = Object.keys(tawesome.colors)
+            return tawesome.colors[keys[keys.length * Math.random() << 0]];
+        };
+
+        tawesome.putAstrixesBetweenEverything = function(str) {
+            var stringWithAstrixes = '';
+            for (var i = 0, len = str.length; i < len; i++) {
+                if (i != 0) {
+                    stringWithAstrixes += ' * ';
+                }
+                stringWithAstrixes += str[i];
+            }
+            return stringWithAstrixes;
+        }
+    </script>
+</head>
+
+<body>
+
+    <p>What text do you want to make really awesome?</p>
+    <br/>
+    <textarea rows="4" cols="50" id="unawesomeTextArea" placeholder="Un-awesome Text Here"></textarea>
+    <br/>
+    <button style="margin-top: 10px;" id="buttonThatMakesTextAwesome" onclick="tawesome.makeTextAwesome()">Make Awesome</button>
+    <br/>
+    <div style="margin-top: 10px; border: 1px gray dotted; padding: 15px;" id="awesomeTextDiv"></div>
+    <br/>
+
+</body>
+
+</html>
