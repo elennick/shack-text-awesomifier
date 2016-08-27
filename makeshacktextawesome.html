@@ -2,6 +2,15 @@
 
 <head>
     <script>
+        String.prototype.reverse = function() {
+            return this.split("").reverse().join("")
+                .replace(/</g, ">")
+                .replace(/\(/g, ")")
+                .replace(/\{/g, "}")
+                .replace(/\[/g, "]")
+                .replace(/\//g, "\\");
+        };
+
         var tawesome = {};
         tawesome.colors = [];
         tawesome.colors.RED = 'r{8==>}r';
@@ -14,16 +23,30 @@
         tawesome.colors.NERDSBEWARE = 'p[8==>]p';
         tawesome.colors.BOLD = 'b[8==>]b';
 
+        tawesome.asciiArt = [];
+        tawesome.asciiArt.ROCKET = '--~~~=:>[XXXXXXXXXX]>';
+        tawesome.asciiArt.SPIDER = '//\\(oo)/\\\\';
+        tawesome.asciiArt.MIDDLE_FINGER_GUY = '╭∩╮（︶︿︶）╭∩╮';
+        tawesome.asciiArt.SHRUG = '¯\\_(ツ)_/¯';
+        tawesome.asciiArt.TABLE_FLIP = '(╯°□°）╯︵ ┻━┻';
+
+        tawesome.wrapper = '- - - < < ( *';
+
         tawesome.makeTextAwesome = function() {
             var unawesomeText = document.getElementById("unawesomeTextArea").value;
             var slightlyBetterText = tawesome.putAstrixesBetweenEverything(unawesomeText);
-            var prettyDamnGoodText = '- - - < < ( * ' + slightlyBetterText.toUpperCase() + ' * ) > > - - -';
+            var prettyDamnGoodText = tawesome.wrapper
+                + slightlyBetterText.toUpperCase()
+                + tawesome.wrapper.reverse();
+
+            var previewTextDiv = document.getElementById("previewTextDiv");
+            previewTextDiv.innerHTML = prettyDamnGoodText;
 
             var finalString = '';
             for (var i = 0, len = prettyDamnGoodText.length; i < len; i++) {
                 var thisLetter = prettyDamnGoodText[i];
-                if(thisLetter === ' ') {
-                  continue;
+                if (thisLetter === ' ') {
+                    continue;
                 }
                 var randomColor = tawesome.randomColorTag();
                 var encodedLetter = randomColor.replace('8==>', thisLetter);
@@ -60,6 +83,10 @@
     <br/>
     <button style="margin-top: 10px;" id="buttonThatMakesTextAwesome" onclick="tawesome.makeTextAwesome()">Make Awesome</button>
     <br/>
+    <br/>
+    <p>Preview:</p>
+    <div style="margin-top: 10px;  margin-bottom: 10px; border: 1px gray dotted; padding: 15px;" id="previewTextDiv"></div>
+    <p>With Shacktags:</p>
     <div style="margin-top: 10px; border: 1px gray dotted; padding: 15px;" id="awesomeTextDiv"></div>
     <br/>
 
