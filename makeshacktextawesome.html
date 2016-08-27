@@ -13,15 +13,51 @@
 
         var tawesome = {};
         tawesome.colors = [];
-        tawesome.colors.RED = 'r{8==>}r';
-        tawesome.colors.GREEN = 'g{8==>}g';
-        tawesome.colors.BLUE = 'b{8==>}b';
-        tawesome.colors.YELLOW = 'y{8==>}y';
-        tawesome.colors.OLIVE = 'e[8==>]e';
-        tawesome.colors.LIMEGREEN = 'l[8==>]l';
-        tawesome.colors.ORANGE = 'n[8==>]n';
-        tawesome.colors.NERDSBEWARE = 'p[8==>]p';
-        tawesome.colors.BOLD = 'b[8==>]b';
+        tawesome.colors.RED = {
+            template: 'r{8==>}r',
+            enabled: true,
+            previewHex: 'ff0000'
+        };
+        tawesome.colors.GREEN = {
+            template: 'g{8==>}g',
+            enabled: true,
+            previewHex: '18ba20'
+        };
+        tawesome.colors.BLUE = {
+            template: 'b{8==>}b',
+            enabled: true,
+            previewHex: '1833ba'
+        };
+        tawesome.colors.YELLOW = {
+            template: 'y{8==>}y',
+            enabled: true,
+            previewHex: 'c4c411'
+        };
+        tawesome.colors.OLIVE = {
+            template: 'e[8==>]e',
+            enabled: true,
+            previewHex: '8da021'
+        };
+        tawesome.colors.LIMEGREEN = {
+            template: 'l[8==>]l',
+            enabled: true,
+            previewHex: '35d31d'
+        };
+        tawesome.colors.ORANGE = {
+            template: 'n[8==>]n',
+            enabled: true,
+            previewHex: 'f2a832'
+        };
+        tawesome.colors.NERDSBEWARE = {
+            template: 'p[8==>]p',
+            enabled: true,
+            previewHex: 'f232bc'
+        };
+        tawesome.colors.BOLD = {
+            template: 'b[8==>]b',
+            enabled: true,
+            previewHex: 'ffffff'
+        };
 
         tawesome.asciiArt = [];
         tawesome.asciiArt.ROCKET = '--~~~=:>[XXXXXXXXXX]>';
@@ -29,32 +65,43 @@
         tawesome.asciiArt.MIDDLE_FINGER_GUY = '╭∩╮（︶︿︶）╭∩╮';
         tawesome.asciiArt.SHRUG = '¯\\_(ツ)_/¯';
         tawesome.asciiArt.TABLE_FLIP = '(╯°□°）╯︵ ┻━┻';
-
-        tawesome.wrapper = '- - - < < ( *';
+        tawesome.asciiArt.AK47 = '︻デ═一';
+        tawesome.asciiArt.TEARS = 'ಥ_ಥ';
+        tawesome.asciiArt.CUPID = '»-(¯`·.·´¯)->';
+        tawesome.asciiArt.SWORD = '@()xxx[{:::”:::”:::”:::”:::”:::”:::=>';
+        tawesome.asciiArt.MONEY = '[̲̅$̲̅(̲̅ιοο̲̅)̲̅$̲̅]';
+        tawesome.asciiArt.FLEX = 'ᕙ༼ ,,ԾܫԾ,, ༽ᕗ';
+        tawesome.asciiArt.KIRBY = '(つ -‘ _ ‘- )つ';
 
         tawesome.makeTextAwesome = function() {
             var unawesomeText = document.getElementById("unawesomeTextArea").value;
             var slightlyBetterText = tawesome.putAstrixesBetweenEverything(unawesomeText);
-            var prettyDamnGoodText = tawesome.wrapper
+
+            var wrapper = document.getElementById("wrapperInput").value;
+            var prettyDamnGoodText = wrapper
                 + slightlyBetterText.toUpperCase()
-                + tawesome.wrapper.reverse();
+                + wrapper.reverse();
 
-            var previewTextDiv = document.getElementById("previewTextDiv");
-            previewTextDiv.innerHTML = prettyDamnGoodText;
-
-            var finalString = '';
+            var finalShackString = '';
+            var finalPreviewString = '';
             for (var i = 0, len = prettyDamnGoodText.length; i < len; i++) {
                 var thisLetter = prettyDamnGoodText[i];
                 if (thisLetter === ' ') {
                     continue;
                 }
                 var randomColor = tawesome.randomColorTag();
-                var encodedLetter = randomColor.replace('8==>', thisLetter);
-                finalString += encodedLetter + ' ';
+                var encodedShackLetter = randomColor.template.replace('8==>', thisLetter);
+                finalShackString += encodedShackLetter + ' ';
+
+                var encodedPreviewLetter = '<span style=\'color:' + randomColor.previewHex + '\'>' + thisLetter + '</span>';
+                finalPreviewString += encodedPreviewLetter + ' ';
             }
 
             var awesomeTextDiv = document.getElementById("awesomeTextDiv");
-            awesomeTextDiv.innerHTML = finalString;
+            awesomeTextDiv.innerHTML = finalShackString;
+
+            var previewTextDiv = document.getElementById("previewTextDiv");
+            previewTextDiv.innerHTML = finalPreviewString;
         };
 
         tawesome.randomColorTag = function() {
@@ -78,6 +125,9 @@
 <body>
 
     <p>What text do you want to make really awesome?</p>
+    <span>
+      Wrapper: <input style='margin: 10px;' type='text' value='- - - < < ( *' id='wrapperInput'></input>
+    </span>
     <br/>
     <textarea rows="4" cols="50" id="unawesomeTextArea" placeholder="Un-awesome Text Here"></textarea>
     <br/>
@@ -85,7 +135,7 @@
     <br/>
     <br/>
     <p>Preview:</p>
-    <div style="margin-top: 10px;  margin-bottom: 10px; border: 1px gray dotted; padding: 15px;" id="previewTextDiv"></div>
+    <div style="background-color: black; margin-top: 10px;  margin-bottom: 10px; border: 1px gray dotted; padding: 15px;" id="previewTextDiv"></div>
     <p>With Shacktags:</p>
     <div style="margin-top: 10px; border: 1px gray dotted; padding: 15px;" id="awesomeTextDiv"></div>
     <br/>
