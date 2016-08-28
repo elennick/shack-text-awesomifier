@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <script>
+    <script type="text/javascript" charset="utf-8">
         String.prototype.reverse = function() {
             return this.split("").reverse().join("")
                 .replace(/</g, ">")
@@ -58,6 +58,15 @@
             enabled: true,
             previewHex: 'ffffff'
         };
+
+        tawesome.sizes = [];
+        tawesome.sizes.BIGGEST = 'q[q[q[q[q[q[8==>]q]q]q]q]q]q';
+        tawesome.sizes.BIGGER = 'q[q[q[q[8==>]q]q]q]q';
+        tawesome.sizes.BIG = 'q[q[8==>]q]q';
+        tawesome.sizes.NORMAL = '8==>';
+        tawesome.sizes.SMALL = 's[s[8==>]s]s';
+        tawesome.sizes.SMALLER = 's[s[s[s[8==>]s]s]s]s';
+        tawesome.sizes.SMALLEST = 's[s[s[s[s[s[8==>]s]s]s]s]s]s';
 
         tawesome.asciiArt = [];
         tawesome.asciiArt.ROCKET = '--~~~=:>[XXXXXXXXXX]>';
@@ -118,7 +127,28 @@
                 stringWithAstrixes += str[i];
             }
             return stringWithAstrixes;
-        }
+        };
+
+        var drawColorCheckboxes = function() {
+            console.log('drawColorCheckboxes');
+            for (var i = 0; i < tawesome.colors.length; i++) {
+              console.log(tawesome.colors[i]);
+            }
+        };
+
+        window.onload = function() {
+            // var asciiArtSize = Object.keys(tawesome.asciiArt).length
+            // for (var i = 0; i < asciiArtSize; i++) {
+            //   console.log(tawesome.asciiArt[i]);
+            // }
+            
+            var asciiArtDiv = document.getElementById("asciiArt");
+            for (var key in tawesome.asciiArt) {
+                asciiArtDiv.innerHTML = asciiArtDiv.innerHTML += '<br/>' + tawesome.asciiArt[key];
+                console.log(tawesome.asciiArt[key]);
+            }
+            drawColorCheckboxes();
+        };
     </script>
 </head>
 
@@ -127,6 +157,9 @@
     <p>What text do you want to make really awesome?</p>
     <span>
       Wrapper: <input style='margin: 10px;' type='text' value='- - - < < ( *' id='wrapperInput'></input>
+    </span>
+    <span>
+      Colors: <span id='colorCheckboxes'></span>
     </span>
     <br/>
     <textarea rows="4" cols="50" id="unawesomeTextArea" placeholder="Un-awesome Text Here"></textarea>
@@ -139,6 +172,7 @@
     <p>With Shacktags:</p>
     <div style="margin-top: 10px; border: 1px gray dotted; padding: 15px;" id="awesomeTextDiv"></div>
     <br/>
+    <div id="asciiArt"></div>
 
 </body>
 
