@@ -11,6 +11,16 @@
                 .replace(/\//g, "\\");
         };
 
+        function getSelectedText(selectElId) {
+            var elt = document.getElementById(selectElId);
+
+            if (elt.selectedIndex == -1) {
+                return null;
+            }
+
+            return elt.options[elt.selectedIndex].text;
+        };
+
         var tawesome = {};
         tawesome.colors = [];
         tawesome.colors.RED = {
@@ -60,10 +70,10 @@
         };
 
         tawesome.sizes = [];
+        tawesome.sizes.NORMAL = '8==>';
         tawesome.sizes.BIGGEST = 'q[q[q[q[q[q[8==>]q]q]q]q]q]q';
         tawesome.sizes.BIGGER = 'q[q[q[q[8==>]q]q]q]q';
         tawesome.sizes.BIG = 'q[q[8==>]q]q';
-        tawesome.sizes.NORMAL = '8==>';
         tawesome.sizes.SMALL = 's[s[8==>]s]s';
         tawesome.sizes.SMALLER = 's[s[s[s[8==>]s]s]s]s';
         tawesome.sizes.SMALLEST = 's[s[s[s[s[s[8==>]s]s]s]s]s]s';
@@ -85,11 +95,7 @@
         tawesome.makeTextAwesome = function() {
             var unawesomeText = document.getElementById("unawesomeTextArea").value;
             var slightlyBetterText = tawesome.putAstrixesBetweenEverything(unawesomeText);
-
-            var wrapper = document.getElementById("wrapperInput").value;
-            var prettyDamnGoodText = wrapper
-                + slightlyBetterText.toUpperCase()
-                + wrapper.reverse();
+            var prettyDamnGoodText = tawesome.getWrappedText(slightlyBetterText);
 
             var finalShackString = '';
             var finalPreviewString = '';
@@ -106,6 +112,8 @@
                 finalPreviewString += encodedPreviewLetter + ' ';
             }
 
+            finalShackString = tawesome.applySize(finalShackString);
+
             var awesomeTextDiv = document.getElementById("awesomeTextDiv");
             awesomeTextDiv.innerHTML = finalShackString;
 
@@ -113,9 +121,35 @@
             previewTextDiv.innerHTML = finalPreviewString;
         };
 
+        tawesome.applySize = function(str) {
+            var selectedSize = getSelectedText("sizeDropdown");
+            var size = tawesome.sizes[selectedSize];
+            return size.replace('8==>', str);
+        };
+
+        tawesome.getWrappedText = function(str) {
+            var wrapper = document.getElementById("wrapperInput").value;
+            var shouldReversePostfix = document.getElementById("reversePostfixWrapperCheckbox").checked;
+
+            var wrappedText = wrapper + str.toUpperCase();
+            if (shouldReversePostfix) {
+                wrappedText += wrapper.reverse();
+            } else {
+                wrappedText += wrapper;
+            }
+            return wrappedText;
+        };
+
         tawesome.randomColorTag = function() {
-            var keys = Object.keys(tawesome.colors)
-            return tawesome.colors[keys[keys.length * Math.random() << 0]];
+            while (true) {
+                var keys = Object.keys(tawesome.colors)
+                var color = tawesome.colors[keys[keys.length * Math.random() << 0]];
+
+                //TODO this is a shitty way of making sure the returned color is enabled, come up with something better
+                if (color.enabled) {
+                    return color;
+                }
+            }
         };
 
         tawesome.putAstrixesBetweenEverything = function(str) {
@@ -129,47 +163,90 @@
             return stringWithAstrixes;
         };
 
-        var drawColorCheckboxes = function() {
-            console.log('drawColorCheckboxes');
-            for (var i = 0; i < tawesome.colors.length; i++) {
-              console.log(tawesome.colors[i]);
+        tawesome.generateColorCheckboxes = function() {
+            var colorsCheckboxesDiv = document.getElementById("colorsCheckboxesDiv");
+
+            for (var key in tawesome.colors) {
+                var color = tawesome.colors[key];
+                var checked = color.enabled;
+                var checkbox = tawesome.createNewColorCheckbox(key, key, checked);
+                colorsCheckboxesDiv.appendChild(checkbox);
+            }
+        };
+
+        tawesome.createNewColorCheckbox = function(name, id, checked) {
+            var span = document.createElement('span');
+            span.id = 'color' + id + 'Span';
+            span.style = 'padding-right: 25px;';
+
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = id;
+            checkbox.checked = checked;
+            checkbox.addEventListener('change', function(event) {
+                var color = tawesome.colors[id];
+                if (checkbox.checked) {
+                    color.enabled = true;
+                } else {
+                    color.enabled = false;
+                }
+            });
+
+            var label = document.createElement('label');
+            label.htmlFor = id;
+            label.innerHTML = id;
+
+            span.appendChild(checkbox);
+            span.appendChild(label);
+
+            return span;
+        };
+
+        tawesome.populateSizeDropdown = function(name, id) {
+            var sizeDropdown = document.getElementById("sizeDropdown");
+
+            for (var key in tawesome.sizes) {
+                var size = tawesome.sizes[key];
+
+                var option = document.createElement("option");
+                option.text = key;
+                sizeDropdown.add(option);
             }
         };
 
         window.onload = function() {
-            // var asciiArtSize = Object.keys(tawesome.asciiArt).length
-            // for (var i = 0; i < asciiArtSize; i++) {
-            //   console.log(tawesome.asciiArt[i]);
-            // }
-            
-            var asciiArtDiv = document.getElementById("asciiArt");
-            for (var key in tawesome.asciiArt) {
-                asciiArtDiv.innerHTML = asciiArtDiv.innerHTML += '<br/>' + tawesome.asciiArt[key];
-                console.log(tawesome.asciiArt[key]);
-            }
-            drawColorCheckboxes();
+            tawesome.generateColorCheckboxes();
+            tawesome.populateSizeDropdown();
         };
     </script>
 </head>
 
 <body>
 
-    <p>What text do you want to make really awesome?</p>
+    <p style='font-weight: bold;'>What text do you want to make really awesome?</p>
     <span>
-      Wrapper: <input style='margin: 10px;' type='text' value='- - - < < ( *' id='wrapperInput'></input>
+      <span style='font-weight: bold;'>Wrapper:</span>
+    <input style='margin: 10px;' type='text' value='- - - < < ( *' id='wrapperInput'></input>
+    <input type='checkbox' id='reversePostfixWrapperCheckbox' checked>Auto-Reverse</input>
     </span>
+    <br/>
     <span>
-      Colors: <span id='colorCheckboxes'></span>
+      <span style='font-weight: bold;'>Colors:</span> <span id='colorsCheckboxesDiv'></span>
     </span>
+    <br/>
+    <span>
+      <span style='font-weight: bold;'>Size:</span> <span id='sizeDropdownDiv'><select id='sizeDropdown'></select></span>
+    </span>
+    <br/>
     <br/>
     <textarea rows="4" cols="50" id="unawesomeTextArea" placeholder="Un-awesome Text Here"></textarea>
     <br/>
     <button style="margin-top: 10px;" id="buttonThatMakesTextAwesome" onclick="tawesome.makeTextAwesome()">Make Awesome</button>
     <br/>
     <br/>
-    <p>Preview:</p>
+    <p style='font-weight: bold;'>Preview:</p>
     <div style="background-color: black; margin-top: 10px;  margin-bottom: 10px; border: 1px gray dotted; padding: 15px;" id="previewTextDiv"></div>
-    <p>With Shacktags:</p>
+    <p style='font-weight: bold;'>With Shacktags:</p>
     <div style="margin-top: 10px; border: 1px gray dotted; padding: 15px;" id="awesomeTextDiv"></div>
     <br/>
     <div id="asciiArt"></div>
